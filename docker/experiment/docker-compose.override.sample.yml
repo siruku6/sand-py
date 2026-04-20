@@ -1,0 +1,14 @@
+services:
+  uv_env:
+    build:
+      context: ../../
+      dockerfile: ./docker/experiment/DockerfileGPU
+      args:
+        WORKING_DIRECTORY: ${WORKING_DIRECTORY}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

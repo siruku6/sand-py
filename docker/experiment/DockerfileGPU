@@ -1,0 +1,50 @@
+# Docker image
+# https://hub.docker.com/layers/nvidia/cuda/13.0.2-cudnn-runtime-ubuntu22.04/images/sha256-e4d4cccfde993716c01f90361aaa4e5ba92bdee510ca0db48e490a4fce524c2c
+FROM nvidia/cuda:13.0.2-cudnn-runtime-ubuntu22.04
+
+# https://zenn.dev/40_comeback_eng/articles/0d7f10e0ff7089
+ENV PYTHONUNBUFFERED 1
+
+ARG WORKING_DIRECTORY
+WORKDIR /${WORKING_DIRECTORY}
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+RUN apt update && apt install -y --no-install-recommends \
+    # For timezone
+    tzdata \
+    # For development and debug (procps: `free -h`)
+    curl git wget net-tools vim procps \
+    # Necessary for pip install
+    gcc g++ libc-dev \
+    \
+    bzip2 \
+    ca-certificates \
+    build-essential \
+    # For cv2 / grad-cam
+    libopencv-dev \
+    # Cleaning image
+    && apt clean && rm -rf /var/lib/apt/lists/*
+
+# NOTE: ../..から実行すること
+# ADD . /${WORKING_DIRECTORY}/
+
+# ----------------------------------------------------------------------
+# Prepare uv
+# https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
+# ----------------------------------------------------------------------
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# 
+# ENV UV_PROJECT_ENVIRONMENT="/usr/local/"
+
+# Python 3.12 を uv でデフォルトで使用するように指定する
+RUN uv python install 3.12
+RUN uv python pin 3.12
+
+# ENV UV_PYTHON=/usr/bin/python3.12
+
+# Prepare packages from pyproject.toml
+COPY environments/experiment/pyproject.toml /${WORKING_DIRECTORY}/pyproject.toml
+# https://www.reddit.com/r/learnpython/comments/1hspt62/comment/m5sak3o/?tl=ja
+RUN uv sync
