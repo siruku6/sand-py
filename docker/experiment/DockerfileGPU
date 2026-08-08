@@ -45,6 +45,6 @@ RUN uv python pin 3.12
 # ENV UV_PYTHON=/usr/bin/python3.12
 
 # Prepare packages from pyproject.toml
-COPY environments/experiment/pyproject.toml /${WORKING_DIRECTORY}/pyproject.toml
+COPY docker/experiment/pyproject.toml /${WORKING_DIRECTORY}/pyproject.toml
 # https://www.reddit.com/r/learnpython/comments/1hspt62/comment/m5sak3o/?tl=ja
 RUN uv sync

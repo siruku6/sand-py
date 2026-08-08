@@ -1,0 +1,30 @@
+# CelebA チュートリアル (src/main_celeba.py) の設定ファイル
+#
+# 各項目は src/application/training/settings.py の TrainingSettings に対応します。
+# 記載を省略した項目は、そのクラスの既定値が使われます。
+
+# 出力ディレクトリ名の末尾に付く実験名 (outputs/celeba/<日時>_<experiment_name>/)
+experiment_name: tutorial_celeba
+
+# backbone として使う timm のモデル名
+model_name: mobilenetv4_conv_small.e2400_r224_in1k
+
+learning_rate: 1.0e-5
+num_epochs: 10
+batch_size: 16
+
+# 動作確認用に、CelebA 全体から先頭何枚を切り出すか
+# メモリ不足で強制終了する場合は batch_size とあわせて小さくしてください
+num_train_samples: 500
+num_val_samples: 100
+
+# true にすると backbone を固定し、タスクごとのヘッドだけを学習します
+freeze_backbone: false
+
+# 検証 loss が何エポック連続で改善しなければ打ち切るか (null なら打ち切らない)
+patience: null
+
+# 学習後に Grad-CAM で判断根拠を可視化する検証画像の枚数 (0 なら可視化しない)
+grad_cam_samples: 8
+
+seed: 42
