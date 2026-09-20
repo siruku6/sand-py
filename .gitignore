@@ -199,5 +199,5 @@ configs/experiments/*.yml
 notebooks/
 docker-compose.override.yml
 mlflow.db
-pyproject.toml
+/pyproject.toml
 uv.lock
